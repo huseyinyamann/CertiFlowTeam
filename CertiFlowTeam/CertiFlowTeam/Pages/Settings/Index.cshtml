@@ -1,0 +1,100 @@
+@page
+@model CertiFlowTeam.Pages.Settings.IndexModel
+@{
+    ViewData["Title"] = "Ayarlar";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Ayarlar</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Ayarlar</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Veritabanı Yönetimi</h4>
+
+                <div class="mb-4">
+                    <p class="text-muted">Veritabanı tablolarını kontrol edin ve eksik tabloları oluşturun.</p>
+                    <button type="button" class="btn btn-primary waves-effect waves-light" id="btnCheckDatabase">
+                        <i class="bx bx-data font-size-16 align-middle me-2"></i>
+                        Veritabanını Kontrol Et
+                    </button>
+                </div>
+
+                <div id="databaseCheckResult" style="display: none;">
+                    <hr />
+                    <div class="alert alert-info" role="alert" id="resultMessage">
+                        <strong>Sonuç:</strong> <span id="resultText"></span>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Detaylar</h5>
+                            <div id="databaseCheckDetails" style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 13px; max-height: 500px; overflow-y: auto; white-space: pre-wrap;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#btnCheckDatabase').on('click', function() {
+                var btn = $(this);
+                btn.prop('disabled', true);
+                btn.html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Kontrol ediliyor...');
+
+                $('#databaseCheckResult').hide();
+
+                $.ajax({
+                    url: '/Settings?handler=CheckDatabase',
+                    type: 'POST',
+                    success: function(response) {
+                        if (response.success) {
+                            $('#resultMessage').removeClass('alert-danger').addClass('alert-success');
+                            $('#resultText').text(response.message);
+                        } else {
+                            $('#resultMessage').removeClass('alert-success').addClass('alert-danger');
+                            $('#resultText').text(response.message);
+                        }
+
+                        var detailsHtml = '';
+                        if (response.details && response.details.length > 0) {
+                            response.details.forEach(function(detail) {
+                                detailsHtml += detail + '\n';
+                            });
+                        }
+
+                        $('#databaseCheckDetails').html(detailsHtml);
+                        $('#databaseCheckResult').fadeIn();
+                    },
+                    error: function(xhr, status, error) {
+                        $('#resultMessage').removeClass('alert-success').addClass('alert-danger');
+                        $('#resultText').text('Bir hata oluştu: ' + error);
+                        $('#databaseCheckDetails').html('Sunucu hatası: ' + xhr.responseText);
+                        $('#databaseCheckResult').fadeIn();
+                    },
+                    complete: function() {
+                        btn.prop('disabled', false);
+                        btn.html('<i class="bx bx-data font-size-16 align-middle me-2"></i>Veritabanını Kontrol Et');
+                    }
+                });
+            });
+        });
+    </script>
+}
