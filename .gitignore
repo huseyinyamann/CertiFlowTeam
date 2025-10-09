@@ -11,6 +11,14 @@
 *.sln.docstates
 *.env
 
+# Connection strings and appsettings with sensitive data
+appsettings.*.json
+!appsettings.Development.json
+
+# Claude Code files
+CLAUDE.md
+.claude/
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
