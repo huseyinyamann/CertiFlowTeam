@@ -1,16 +1,15 @@
 using CertiFlowTeam.Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CertiFlowTeam.Pages.Settings
+namespace CertiFlowTeam.Controllers
 {
-    public class IndexModel : PageModel
+    public class SettingsController : BaseController
     {
         #region Dependencies
 
         private readonly DatabaseHelper _databaseHelper;
 
-        public IndexModel(IConfiguration configuration)
+        public SettingsController(IConfiguration configuration)
         {
             _databaseHelper = new DatabaseHelper(configuration);
         }
@@ -19,21 +18,23 @@ namespace CertiFlowTeam.Pages.Settings
 
         #region Page Actions
 
-        public void OnGet()
+        public IActionResult Index()
         {
+            return View();
         }
 
         #endregion
 
         #region Ajax Methods
 
-        public async Task<JsonResult> OnPostCheckDatabaseAsync()
+        [HttpPost]
+        public async Task<JsonResult> CheckDatabase()
         {
             try
             {
                 var result = await _databaseHelper.CheckAndCreateTablesAsync();
 
-                return new JsonResult(new
+                return Json(new
                 {
                     success = result.Success,
                     message = result.Message,
@@ -42,10 +43,10 @@ namespace CertiFlowTeam.Pages.Settings
             }
             catch (Exception ex)
             {
-                return new JsonResult(new
+                return Json(new
                 {
                     success = false,
-                    message = "Bir hata oluştu: " + ex.Message,
+                    message = "An error occurred: " + ex.Message,
                     details = new List<string> { ex.ToString() }
                 });
             }

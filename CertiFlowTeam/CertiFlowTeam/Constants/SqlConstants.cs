@@ -8,11 +8,11 @@ namespace CertiFlowTeam.Constants
 
         public static class TableNames
         {
-            public const string Kullanicilar = "Kullanicilar";
-            public const string Ayarlar = "Ayarlar";
-            public const string Belgeler = "Belgeler";
-            public const string BelgeLog = "BelgeLog";
-            public const string Firmalar = "Firmalar";
+            public const string Users = "Users";
+            public const string Settings = "Settings";
+            public const string Documents = "Documents";
+            public const string DocumentLogs = "DocumentLogs";
+            public const string Companies = "Companies";
         }
 
         #endregion
@@ -21,115 +21,115 @@ namespace CertiFlowTeam.Constants
 
         public static class CreateTableScripts
         {
-            public static string Kullanicilar => $@"
-IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{TableNames.Kullanicilar}' AND xtype='U')
-CREATE TABLE {TableNames.Kullanicilar} (
+            public static string Users => $@"
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{TableNames.Users}' AND xtype='U')
+CREATE TABLE {TableNames.Users} (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    AdSoyad NVARCHAR(100) NOT NULL,
+    FullName NVARCHAR(100) NOT NULL,
     Email NVARCHAR(100) UNIQUE NOT NULL,
-    Sifre NVARCHAR(255) NOT NULL,
-    Rol INT NOT NULL DEFAULT {(int)Role.User},
-    FirmaId INT,
-    Telefon NVARCHAR(20),
-    Aktif BIT DEFAULT 1,
-    OlusturmaTarihi DATETIME2 DEFAULT GETDATE(),
-    SonGirisTarihi DATETIME2,
-    GuncellenmeTarihi DATETIME2,
-    Silindi BIT DEFAULT 0,
-    FOREIGN KEY (FirmaId) REFERENCES {TableNames.Firmalar}(Id)
+    Password NVARCHAR(255) NOT NULL,
+    Role INT NOT NULL DEFAULT {(int)Role.User},
+    CompanyId INT,
+    Phone NVARCHAR(20),
+    IsActive BIT DEFAULT 1,
+    CreatedDate DATETIME2 DEFAULT GETDATE(),
+    LastLoginDate DATETIME2,
+    UpdatedDate DATETIME2,
+    IsDeleted BIT DEFAULT 0,
+    FOREIGN KEY (CompanyId) REFERENCES {TableNames.Companies}(Id)
 );";
 
-            public static string Firmalar => $@"
-IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{TableNames.Firmalar}' AND xtype='U')
-CREATE TABLE {TableNames.Firmalar} (
+            public static string Companies => $@"
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{TableNames.Companies}' AND xtype='U')
+CREATE TABLE {TableNames.Companies} (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    FirmaAdi NVARCHAR(255) NOT NULL,
-    VergiNo NVARCHAR(50),
-    Adres NVARCHAR(500),
-    Telefon NVARCHAR(20),
+    CompanyName NVARCHAR(255) NOT NULL,
+    TaxNumber NVARCHAR(50),
+    Address NVARCHAR(500),
+    Phone NVARCHAR(20),
     Email NVARCHAR(100),
-    YetkiliKisi NVARCHAR(100),
-    YetkiliTelefon NVARCHAR(20),
-    Aktif BIT DEFAULT 1,
-    OlusturmaTarihi DATETIME2 DEFAULT GETDATE(),
-    GuncellenmeTarihi DATETIME2,
-    Silindi BIT DEFAULT 0
+    AuthorizedPerson NVARCHAR(100),
+    AuthorizedPhone NVARCHAR(20),
+    IsActive BIT DEFAULT 1,
+    CreatedDate DATETIME2 DEFAULT GETDATE(),
+    UpdatedDate DATETIME2,
+    IsDeleted BIT DEFAULT 0
 );";
 
-            public static string Belgeler => $@"
-IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{TableNames.Belgeler}' AND xtype='U')
-CREATE TABLE {TableNames.Belgeler} (
+            public static string Documents => $@"
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{TableNames.Documents}' AND xtype='U')
+CREATE TABLE {TableNames.Documents} (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    BelgeAdi NVARCHAR(255) NOT NULL,
-    BelgeTuru NVARCHAR(100),
-    BelgeNo NVARCHAR(50),
-    DosyaYolu NVARCHAR(500) NOT NULL,
-    DosyaBoyutu BIGINT,
-    Aciklama NVARCHAR(1000),
-    OnayDurumu INT NOT NULL DEFAULT {(int)DocumentApprovalStatus.Pending},
-    YukleyenKullaniciId INT NOT NULL,
-    OnaylayacakKullaniciId INT,
-    OnaylayanKullaniciId INT,
-    OnayTarihi DATETIME2,
-    RedNedeni NVARCHAR(500),
-    FirmaId INT,
-    OlusturmaTarihi DATETIME2 DEFAULT GETDATE(),
-    GuncellenmeTarihi DATETIME2,
-    Silindi BIT DEFAULT 0,
-    FOREIGN KEY (YukleyenKullaniciId) REFERENCES {TableNames.Kullanicilar}(Id),
-    FOREIGN KEY (OnaylayacakKullaniciId) REFERENCES {TableNames.Kullanicilar}(Id),
-    FOREIGN KEY (OnaylayanKullaniciId) REFERENCES {TableNames.Kullanicilar}(Id),
-    FOREIGN KEY (FirmaId) REFERENCES {TableNames.Firmalar}(Id)
+    DocumentName NVARCHAR(255) NOT NULL,
+    DocumentType NVARCHAR(100),
+    DocumentNumber NVARCHAR(50),
+    FilePath NVARCHAR(500) NOT NULL,
+    FileSize BIGINT,
+    Description NVARCHAR(1000),
+    ApprovalStatus INT NOT NULL DEFAULT {(int)DocumentApprovalStatus.Pending},
+    UploadedByUserId INT NOT NULL,
+    AssignedToUserId INT,
+    ApprovedByUserId INT,
+    ApprovalDate DATETIME2,
+    RejectionReason NVARCHAR(500),
+    CompanyId INT,
+    CreatedDate DATETIME2 DEFAULT GETDATE(),
+    UpdatedDate DATETIME2,
+    IsDeleted BIT DEFAULT 0,
+    FOREIGN KEY (UploadedByUserId) REFERENCES {TableNames.Users}(Id),
+    FOREIGN KEY (AssignedToUserId) REFERENCES {TableNames.Users}(Id),
+    FOREIGN KEY (ApprovedByUserId) REFERENCES {TableNames.Users}(Id),
+    FOREIGN KEY (CompanyId) REFERENCES {TableNames.Companies}(Id)
 );";
 
-            public static string BelgeLog => $@"
-IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{TableNames.BelgeLog}' AND xtype='U')
-CREATE TABLE {TableNames.BelgeLog} (
+            public static string DocumentLogs => $@"
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{TableNames.DocumentLogs}' AND xtype='U')
+CREATE TABLE {TableNames.DocumentLogs} (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    BelgeId INT NOT NULL,
-    KullaniciId INT NOT NULL,
-    Islem NVARCHAR(100) NOT NULL,
-    Aciklama NVARCHAR(500),
-    EskiDurum INT,
-    YeniDurum INT,
-    EskiDegerler NVARCHAR(MAX),
-    YeniDegerler NVARCHAR(MAX),
-    IPAdresi NVARCHAR(45),
-    IslemTarihi DATETIME2 DEFAULT GETDATE(),
-    Basarili BIT DEFAULT 1,
-    HataMesaji NVARCHAR(1000),
-    Silindi BIT DEFAULT 0,
-    FOREIGN KEY (BelgeId) REFERENCES {TableNames.Belgeler}(Id),
-    FOREIGN KEY (KullaniciId) REFERENCES {TableNames.Kullanicilar}(Id)
+    DocumentId INT NOT NULL,
+    UserId INT NOT NULL,
+    Action NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(500),
+    OldStatus INT,
+    NewStatus INT,
+    OldValues NVARCHAR(MAX),
+    NewValues NVARCHAR(MAX),
+    IPAddress NVARCHAR(45),
+    ActionDate DATETIME2 DEFAULT GETDATE(),
+    IsSuccess BIT DEFAULT 1,
+    ErrorMessage NVARCHAR(1000),
+    IsDeleted BIT DEFAULT 0,
+    FOREIGN KEY (DocumentId) REFERENCES {TableNames.Documents}(Id),
+    FOREIGN KEY (UserId) REFERENCES {TableNames.Users}(Id)
 );";
 
-            public static string Ayarlar => $@"
-IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{TableNames.Ayarlar}' AND xtype='U')
-CREATE TABLE {TableNames.Ayarlar} (
+            public static string Settings => $@"
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{TableNames.Settings}' AND xtype='U')
+CREATE TABLE {TableNames.Settings} (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    AyarAnahtari NVARCHAR(50) UNIQUE NOT NULL,
-    GoruntulemeAdi NVARCHAR(100) NOT NULL,
-    AyarDegeri NVARCHAR(255) NOT NULL,
-    VarsayilanDeger NVARCHAR(255) NOT NULL,
-    VeriTipi NVARCHAR(20) NOT NULL,
-    Aciklama NVARCHAR(500),
-    Aktif BIT DEFAULT 1,
-    SistemAyari BIT DEFAULT 0,
-    OlusturmaTarihi DATETIME2 DEFAULT GETDATE(),
-    GuncellenmeTarihi DATETIME2
+    SettingKey NVARCHAR(50) UNIQUE NOT NULL,
+    DisplayName NVARCHAR(100) NOT NULL,
+    SettingValue NVARCHAR(255) NOT NULL,
+    DefaultValue NVARCHAR(255) NOT NULL,
+    DataType NVARCHAR(20) NOT NULL,
+    Description NVARCHAR(500),
+    IsActive BIT DEFAULT 1,
+    IsSystemSetting BIT DEFAULT 0,
+    CreatedDate DATETIME2 DEFAULT GETDATE(),
+    UpdatedDate DATETIME2
 );
 
-IF NOT EXISTS (SELECT * FROM {TableNames.Ayarlar} WHERE AyarAnahtari = 'maks_dosya_boyutu_mb')
-INSERT INTO {TableNames.Ayarlar} (AyarAnahtari, GoruntulemeAdi, AyarDegeri, VarsayilanDeger, VeriTipi, Aciklama, SistemAyari)
-VALUES ('maks_dosya_boyutu_mb', 'Maksimum Dosya Boyutu (MB)', '50', '50', 'int', 'Yüklenebilecek maksimum dosya boyutu (MB cinsinden)', 1);
+IF NOT EXISTS (SELECT * FROM {TableNames.Settings} WHERE SettingKey = 'max_file_size_mb')
+INSERT INTO {TableNames.Settings} (SettingKey, DisplayName, SettingValue, DefaultValue, DataType, Description, IsSystemSetting)
+VALUES ('max_file_size_mb', 'Maximum File Size (MB)', '50', '50', 'int', 'Maximum file size that can be uploaded (in MB)', 1);
 
-IF NOT EXISTS (SELECT * FROM {TableNames.Ayarlar} WHERE AyarAnahtari = 'izin_verilen_dosya_turleri')
-INSERT INTO {TableNames.Ayarlar} (AyarAnahtari, GoruntulemeAdi, AyarDegeri, VarsayilanDeger, VeriTipi, Aciklama, SistemAyari)
-VALUES ('izin_verilen_dosya_turleri', 'İzin Verilen Dosya Türleri', '.pdf,.doc,.docx,.xls,.xlsx,.jpg,.png', '.pdf,.doc,.docx,.xls,.xlsx,.jpg,.png', 'string', 'Yüklenebilecek dosya uzantıları (virgülle ayrılmış)', 1);
+IF NOT EXISTS (SELECT * FROM {TableNames.Settings} WHERE SettingKey = 'allowed_file_types')
+INSERT INTO {TableNames.Settings} (SettingKey, DisplayName, SettingValue, DefaultValue, DataType, Description, IsSystemSetting)
+VALUES ('allowed_file_types', 'Allowed File Types', '.pdf,.doc,.docx,.xls,.xlsx,.jpg,.png', '.pdf,.doc,.docx,.xls,.xlsx,.jpg,.png', 'string', 'Allowed file extensions (comma separated)', 1);
 
-IF NOT EXISTS (SELECT * FROM {TableNames.Ayarlar} WHERE AyarAnahtari = 'otomatik_onay_etkin')
-INSERT INTO {TableNames.Ayarlar} (AyarAnahtari, GoruntulemeAdi, AyarDegeri, VarsayilanDeger, VeriTipi, Aciklama, SistemAyari)
-VALUES ('otomatik_onay_etkin', 'Otomatik Onay Etkin', '0', '0', 'bit', 'Belirli koşullarda otomatik onay yapılması', 1);";
+IF NOT EXISTS (SELECT * FROM {TableNames.Settings} WHERE SettingKey = 'auto_approval_enabled')
+INSERT INTO {TableNames.Settings} (SettingKey, DisplayName, SettingValue, DefaultValue, DataType, Description, IsSystemSetting)
+VALUES ('auto_approval_enabled', 'Auto Approval Enabled', '0', '0', 'bit', 'Enable automatic approval under certain conditions', 1);";
         }
 
         #endregion
@@ -137,11 +137,11 @@ VALUES ('otomatik_onay_etkin', 'Otomatik Onay Etkin', '0', '0', 'bit', 'Belirli 
         #region Table Creation Order
 
         public static readonly string[] TableCreationOrder = {
-            TableNames.Firmalar,
-            TableNames.Kullanicilar,
-            TableNames.Belgeler,
-            TableNames.BelgeLog,
-            TableNames.Ayarlar
+            TableNames.Companies,
+            TableNames.Users,
+            TableNames.Documents,
+            TableNames.DocumentLogs,
+            TableNames.Settings
         };
 
         #endregion
@@ -164,15 +164,15 @@ VALUES ('otomatik_onay_etkin', 'Otomatik Onay Etkin', '0', '0', 'bit', 'Belirli 
 
         public static class MigrationScripts
         {
-            public static string AddBelgeTuruToBelgeler => $@"
-IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{TableNames.Belgeler}' AND COLUMN_NAME = 'BelgeTuru')
+            public static string AddDocumentTypeToDocuments => $@"
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{TableNames.Documents}' AND COLUMN_NAME = 'DocumentType')
 BEGIN
-    ALTER TABLE {TableNames.Belgeler} ADD BelgeTuru NVARCHAR(100) NULL;
-    PRINT 'BelgeTuru kolonu eklendi';
+    ALTER TABLE {TableNames.Documents} ADD DocumentType NVARCHAR(100) NULL;
+    PRINT 'DocumentType column added';
 END
 ELSE
 BEGIN
-    PRINT 'BelgeTuru kolonu zaten mevcut';
+    PRINT 'DocumentType column already exists';
 END";
         }
 
@@ -182,22 +182,22 @@ END";
 
         public static class LogActions
         {
-            public const string BelgeYuklendi = "BelgeYuklendi";
-            public const string BelgeGuncellendi = "BelgeGuncellendi";
-            public const string BelgeSilindi = "BelgeSilindi";
-            public const string BelgeOnaylandi = "BelgeOnaylandi";
-            public const string BelgeReddedildi = "BelgeReddedildi";
-            public const string BelgeIptalEdildi = "BelgeIptalEdildi";
-            public const string KullaniciGirisi = "KullaniciGirisi";
-            public const string KullaniciCikisi = "KullaniciCikisi";
-            public const string KullaniciOlusturuldu = "KullaniciOlusturuldu";
-            public const string KullaniciGuncellendi = "KullaniciGuncellendi";
-            public const string KullaniciSilindi = "KullaniciSilindi";
-            public const string FirmaOlusturuldu = "FirmaOlusturuldu";
-            public const string FirmaGuncellendi = "FirmaGuncellendi";
-            public const string FirmaSilindi = "FirmaSilindi";
-            public const string VeritabaniKontrolEdildi = "VeritabaniKontrolEdildi";
-            public const string VeritabaniOlusturuldu = "VeritabaniOlusturuldu";
+            public const string DocumentUploaded = "DocumentUploaded";
+            public const string DocumentUpdated = "DocumentUpdated";
+            public const string DocumentDeleted = "DocumentDeleted";
+            public const string DocumentApproved = "DocumentApproved";
+            public const string DocumentRejected = "DocumentRejected";
+            public const string DocumentCancelled = "DocumentCancelled";
+            public const string UserLogin = "UserLogin";
+            public const string UserLogout = "UserLogout";
+            public const string UserCreated = "UserCreated";
+            public const string UserUpdated = "UserUpdated";
+            public const string UserDeleted = "UserDeleted";
+            public const string CompanyCreated = "CompanyCreated";
+            public const string CompanyUpdated = "CompanyUpdated";
+            public const string CompanyDeleted = "CompanyDeleted";
+            public const string DatabaseChecked = "DatabaseChecked";
+            public const string DatabaseCreated = "DatabaseCreated";
         }
 
         #endregion

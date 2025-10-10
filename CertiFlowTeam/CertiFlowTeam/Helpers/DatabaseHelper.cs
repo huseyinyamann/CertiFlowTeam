@@ -90,13 +90,13 @@ namespace CertiFlowTeam.Helpers
 
         private async Task CheckAndAddMissingColumnsAsync(SqlConnection connection, string tableName, List<string> details)
         {
-            if (tableName == SqlConstants.TableNames.Belgeler)
+            if (tableName == SqlConstants.TableNames.Documents)
             {
-                if (!await ColumnExistsAsync(connection, tableName, "BelgeTuru"))
+                if (!await ColumnExistsAsync(connection, tableName, "DocumentType"))
                 {
-                    details.Add($"    ⚠ BelgeTuru kolonu eksik, ekleniyor...");
-                    await ExecuteNonQueryAsync(connection, SqlConstants.MigrationScripts.AddBelgeTuruToBelgeler);
-                    details.Add($"    ✓ BelgeTuru kolonu eklendi");
+                    details.Add($"    ⚠ DocumentType kolonu eksik, ekleniyor...");
+                    await ExecuteNonQueryAsync(connection, SqlConstants.MigrationScripts.AddDocumentTypeToDocuments);
+                    details.Add($"    ✓ DocumentType kolonu eklendi");
                 }
             }
         }
@@ -116,11 +116,11 @@ namespace CertiFlowTeam.Helpers
         {
             return tableName switch
             {
-                SqlConstants.TableNames.Firmalar => SqlConstants.CreateTableScripts.Firmalar,
-                SqlConstants.TableNames.Kullanicilar => SqlConstants.CreateTableScripts.Kullanicilar,
-                SqlConstants.TableNames.Belgeler => SqlConstants.CreateTableScripts.Belgeler,
-                SqlConstants.TableNames.BelgeLog => SqlConstants.CreateTableScripts.BelgeLog,
-                SqlConstants.TableNames.Ayarlar => SqlConstants.CreateTableScripts.Ayarlar,
+                SqlConstants.TableNames.Companies => SqlConstants.CreateTableScripts.Companies,
+                SqlConstants.TableNames.Users => SqlConstants.CreateTableScripts.Users,
+                SqlConstants.TableNames.Documents => SqlConstants.CreateTableScripts.Documents,
+                SqlConstants.TableNames.DocumentLogs => SqlConstants.CreateTableScripts.DocumentLogs,
+                SqlConstants.TableNames.Settings => SqlConstants.CreateTableScripts.Settings,
                 _ => string.Empty
             };
         }

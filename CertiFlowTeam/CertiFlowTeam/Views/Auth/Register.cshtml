@@ -1,0 +1,123 @@
+@{
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+    ViewData["Title"] = "Kayıt Ol";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-10 col-xl-8">
+        <div class="card overflow-hidden">
+            <div class="bg-primary bg-soft">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="text-primary p-4">
+                            <h5 class="text-primary">Hoş Geldiniz!</h5>
+                            <p>CertiFlow'a kayıt olun ve döküman yönetimini kolaylaştırın.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body pt-0">
+                <div class="p-2">
+                    <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="successAlert">
+                        <i class="mdi mdi-check-all me-2"></i>
+                        <span id="successMessage"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <div class="alert alert-danger alert-dismissible fade show d-none" role="alert" id="errorAlert">
+                        <i class="mdi mdi-block-helper me-2"></i>
+                        <span id="errorMessage"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <form class="needs-validation" id="registerForm" novalidate>
+                        <div class="mb-4">
+                            <h5 class="font-size-14 mb-3"><i class="mdi mdi-office-building text-primary me-1"></i> Firma Bilgileri</h5>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="companyName" class="form-label">Firma Adı <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="companyName" placeholder="Firma adını giriniz" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="taxNumber" class="form-label">Vergi Numarası <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="taxNumber" placeholder="Vergi numarasını giriniz" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="companyEmail" class="form-label">Firma Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="companyEmail" placeholder="firma@example.com" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="companyPhone" class="form-label">Firma Telefon</label>
+                                    <input type="text" class="form-control" id="companyPhone" placeholder="0xxx xxx xx xx">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="authorizedPerson" class="form-label">Yetkili Kişi <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="authorizedPerson" placeholder="Yetkili kişi adı" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="authorizedPhone" class="form-label">Yetkili Telefon</label>
+                                    <input type="text" class="form-control" id="authorizedPhone" placeholder="0xxx xxx xx xx">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Adres</label>
+                                <textarea class="form-control" id="address" rows="2" placeholder="Firma adresi"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5 class="font-size-14 mb-3"><i class="mdi mdi-account text-primary me-1"></i> Kullanıcı Bilgileri</h5>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="fullName" class="form-label">Ad Soyad <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="fullName" placeholder="Adınız ve soyadınız" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="userEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="userEmail" placeholder="email@example.com" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="userPhone" class="form-label">Telefon</label>
+                                    <input type="text" class="form-control" id="userPhone" placeholder="0xxx xxx xx xx">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="password" class="form-label">Şifre <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" id="password" placeholder="Şifrenizi giriniz" required minlength="6">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="passwordConfirm" class="form-label">Şifre Tekrar <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" id="passwordConfirm" placeholder="Şifrenizi tekrar giriniz" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 d-grid">
+                            <button class="btn btn-primary waves-effect waves-light" type="submit" id="registerBtn">
+                                <i class="mdi mdi-account-plus me-1"></i> Kayıt Ol
+                            </button>
+                        </div>
+
+                        <div class="mt-4 text-center">
+                            <p class="mb-0">Zaten hesabınız var mı? <a href="@Url.Action("Login", "Auth")" class="fw-semibold text-primary text-decoration-underline">Giriş Yap</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/auth/register.js"></script>
+}

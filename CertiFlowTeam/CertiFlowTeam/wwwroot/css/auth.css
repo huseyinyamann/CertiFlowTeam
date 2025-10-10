@@ -1,0 +1,78 @@
+.account-pages {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background-color: #f8f8fb;
+}
+
+.auth-pass-inputgroup .btn {
+    border-color: #ced4da;
+}
+
+.auth-pass-inputgroup .btn:hover {
+    background-color: #f8f9fa;
+}
+
+.card {
+    box-shadow: 0 0.75rem 1.5rem rgba(18, 38, 63, 0.03);
+    border: none;
+    border-radius: 0.25rem;
+}
+
+.bg-soft {
+    background-color: rgba(85, 110, 230, 0.25) !important;
+}
+
+.form-control:focus {
+    border-color: #556ee6;
+    box-shadow: 0 0 0 0.15rem rgba(85, 110, 230, 0.25);
+}
+
+.btn-primary {
+    background-color: #556ee6;
+    border-color: #556ee6;
+}
+
+.btn-primary:hover {
+    background-color: #4d63d4;
+    border-color: #4d63d4;
+}
+
+.text-primary {
+    color: #556ee6 !important;
+}
+
+.was-validated .form-control:invalid,
+.form-control.is-invalid {
+    border-color: #f46a6a;
+    background-image: none;
+}
+
+.was-validated .form-control:valid,
+.form-control.is-valid {
+    border-color: #34c38f;
+    background-image: none;
+}
+
+.invalid-feedback {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #f46a6a;
+}
+
+.alert {
+    border-radius: 0.25rem;
+}
+
+.alert-success {
+    background-color: rgba(52, 195, 143, 0.18);
+    border-color: rgba(52, 195, 143, 0.3);
+    color: #2b8a67;
+}
+
+.alert-danger {
+    background-color: rgba(244, 106, 106, 0.18);
+    border-color: rgba(244, 106, 106, 0.3);
+    color: #c14545;
+}
