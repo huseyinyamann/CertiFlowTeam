@@ -65,7 +65,7 @@ namespace CertiFlowTeam.Controllers
         #region Ajax Methods
 
         [HttpPost]
-        public async Task<JsonResult> DoLogin(FormCollection form)
+        public async Task<JsonResult> DoLogin(IFormCollection form)
         {
             var model = new UserLoginModel
             {
@@ -91,7 +91,7 @@ namespace CertiFlowTeam.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> DoRegister(FormCollection form)
+        public async Task<JsonResult> DoRegister(IFormCollection form)
         {
             var companyModel = new CompanyRegisterModel
             {
