@@ -20,12 +20,14 @@ namespace CertiFlowTeam.Helpers
         {
             try
             {
+                var normalizedEmail = model.Email.Trim().ToLower();
+
                 var checkSql = @"SELECT COUNT(*) FROM Users
-                                WHERE Email = @Email AND IsDeleted = 0";
+                                WHERE LOWER(LTRIM(RTRIM(Email))) = @Email AND IsDeleted = 0";
 
                 var checkParams = new Dictionary<string, object>
                 {
-                    { "@Email", model.Email }
+                    { "@Email", normalizedEmail }
                 };
 
                 var checkResult = await _sqlExecutor.ExecuteScalarAsync<int>(checkSql, checkParams);
@@ -45,8 +47,8 @@ namespace CertiFlowTeam.Helpers
 
                 var parameters = new Dictionary<string, object>
                 {
-                    { "@FullName", model.FullName },
-                    { "@Email", model.Email },
+                    { "@FullName", model.FullName.Trim() },
+                    { "@Email", normalizedEmail },
                     { "@Password", hashedPassword },
                     { "@Role", (int)Role.User },
                     { "@CompanyId", model.CompanyId },
@@ -78,17 +80,17 @@ namespace CertiFlowTeam.Helpers
             {
                 var hashedPassword = HashPassword(model.Password);
 
-                var sql = @"SELECT u.Id, u.FullName, u.Email, u.Role, u.CompanyId, c.CompanyName
+                var sql = @"SELECT u.Id AS UserId, u.FullName, u.Email, u.Role, u.CompanyId, c.CompanyName
                            FROM Users u
                            LEFT JOIN Companies c ON u.CompanyId = c.Id
-                           WHERE u.Email = @Email
+                           WHERE LOWER(LTRIM(RTRIM(u.Email))) = @Email
                            AND u.Password = @Password
                            AND u.IsActive = 1
                            AND u.IsDeleted = 0";
 
                 var parameters = new Dictionary<string, object>
                 {
-                    { "@Email", model.Email },
+                    { "@Email", model.Email.Trim().ToLower() },
                     { "@Password", hashedPassword }
                 };
 

@@ -69,8 +69,8 @@ namespace CertiFlowTeam.Controllers
         {
             var model = new UserLoginModel
             {
-                Email = form["email"],
-                Password = form["password"],
+                Email = form["email"].ToString().Trim().ToLower(),
+                Password = form["password"].ToString().Trim(),
                 RememberMe = form["rememberMe"] == "true"
             };
 
